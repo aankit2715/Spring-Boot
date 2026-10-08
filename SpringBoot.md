@@ -47,7 +47,7 @@ Running this starts an embedded Tomcat server on port 8080 — no external setup
 </dependency>
 ```
 Now you can hit:
-http://localhost:8080/actuator/health → shows app health status
+http://localhost:8080/actuator/health → shows app health status and
 http://localhost:8080/actuator/metrics → shows JVM memory, CPU usage, etc.
 This makes apps production-ready without extra setup.
 
