@@ -510,7 +510,7 @@ public class PaymentService {
 * Spring starts application and sees: PaymentService needs PaymentGateway. So Spring seraches and find "RazorpayGateway" and "StripeGateway". Now spring ask which one i inject? which It cannot decide.  **Result: NoUniqueBeanDefinitionException**  
 Meaning: Multiple beans found for the same type. Expected 1 bean but found 2.  
 
-- **Solution 1: @Primary**
+- **Solution 1: @Primary**  
 Ex:
 ```java
 public interface PaymentGateway {}
@@ -569,3 +569,43 @@ public class RazorpayGateway
 private PaymentGateway gateway;
 ```  
 Spring matches by bean name.
+
+
+# Difference Between @Component and @Bean:
+Both @Component and @Bean do the same ultimate job: Register an object inside the Spring IoC Container so Spring can manage it.  
+
+The difference is:  
+- @Component → Spring creates the object.
+- @Bean → You create the object, Spring manages it.  
+
+Ex: Suppose you want, ObjectMapper  
+```java
+ObjectMapper mapper = new ObjectMapper();
+```  
+
+Can you do this?  
+```java
+@Component
+public class ObjectMapper {
+}
+```  
+No, Because ObjectMapper comes from Jackson library. You don't own its source code, So use @Bean.  
+
+So, we used Bean here, Spring only manages it afterward.  
+```java
+@Bean
+public ObjectMapper objectMapper() {
+	ObjectMapper mapper = new ObjectMapper();
+    return mapper;
+}
+```  
+
+- **Easy Rule to Remember:**  
+	* Did I write this class? If yes then Use @Component, @Service, @Repository.  
+	* Is it from an external library? If yes then Use @Bean  
+	Ex: ObjectMapper
+		ExecutorService
+		RestTemplate
+		ModelMapper
+		WebClient
+
