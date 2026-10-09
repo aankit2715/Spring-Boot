@@ -42,7 +42,7 @@ public class Main {
 **What's wrong?**  
 Car is tightly coupled with Engine. If suppose there is changes in Engine class like PatrolEngine, DiesileEngne, ElectricEngine. Everytime you'll need to modify Car.
 
-1. **Inversion of Control (IoC):**  
+# 1. Inversion of Control (IoC):  
 Inversion of Control means transferring the responsibility of object creation and management from application code to Spring Container.  
 
 - Traditional Way:  
@@ -107,3 +107,92 @@ public class Engine {
 }
 ```  
 Spring creates and manages this object.  
+
+# 2. Dependency Injection (DI):  
+Ex: Car depends on Engine. Spring injects Engine into Car.  
+
+- Types of Dependency Injection:  
+
+**1. Constructor Injection (Recommended):**  
+Ex:
+```java
+@Component
+public class Car {
+
+    private final Engine engine;
+
+    public Car(Engine engine) {
+        this.engine = engine;
+    }
+}
+
+Spring:
+Engine engine = new Engine();
+Car car = new Car(engine);
+```  
+
+**Benefits:**  
+	- Immutable
+	- Thread-safe
+	- Easy Unit Testing
+	- Recommended in Spring Boot  
+
+**Why Constructor Injection?**  
+Because mandatory dependencies become explicit and objects can never be created in an invalid state. Means When someone looks at your class, they can immediately understand what objects are required for that class to work correctly.  
+
+**2. Setter Injection:**  
+In Setter Injection, Spring first creates the object and then injects dependencies using setter methods. **It Used for optional dependencies.**  
+Ex:
+```java
+@Component
+public class Car {
+
+    private Engine engine;
+
+    @Autowired
+    public void setEngine(Engine engine) {
+        this.engine = engine;
+    }
+}
+```  
+
+**What happens internally?**  
+Spring roughly does:  
+```java
+Engine engine = new Engine();
+Car car = new Car();      // Step 1: Create object
+car.setEngine(engine);    // Step 2: Inject dependency
+```  
+
+**Why is it called Optional Dependency?**  
+Ex:
+```java
+public class ReportService {
+
+    private EmailService emailService;
+
+    public void generateReport() {
+        System.out.println("Report Generated");
+    }
+
+    @Autowired
+    public void setEmailService(EmailService emailService) {
+        this.emailService = emailService;
+    }
+}
+```  
+Here, **Core functionality:- Generate Report** and **Optional functionality:- Email Report**. Even if EmailService is unavailable, still reportservice will work. Hence EmailService is optional.  
+ 
+
+**3. Field Injection:**  
+Ex:
+```java
+@Component
+public class Car {
+
+    @Autowired
+    private Engine engine;
+}
+```  
+Works but not recommended.
+
