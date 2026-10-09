@@ -211,35 +211,35 @@ class Car {
 ```  
 Application startup:  
 
-- Step 1: 
-```java 
+**Step 1:**   
 Spring scans packages.  
+```java 
 @ComponentScan
- 
-Finds: Engine and Car
-```  
+``` 
+Finds: Engine and Car.  
+  
 
-- Step 2
+**Step 2:**  
+Creates Engine Bean.  
 ```java
-Creates Engine Bean.
 Engine engine = new Engine();
 ```  
 
-- Step 3
+**Step 3:**  
+Creates Car Bean.  
 ```java
-Creates Car Bean.
 Car car = new Car();
 ```  
 
-- Step 4
+**Step 4:**  
+Injects Engine into Car.  
 ```java
-Injects Engine into Car.
 car.engine = engine;
-```
+```  
 
-- Step 5
+**Step 5:**  
+Stores in IoC Container.  
 ```java
-Stores in IoC Container.
 Map<String, Object> beanContainer;
  
 Conceptually:
