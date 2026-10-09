@@ -248,3 +248,132 @@ Conceptually:
     "car" : CarObject
 }
 ```
+
+# Stereotype Annotations:  
+A stereotype annotation tells Spring: "This class is a Spring-managed bean and has a specific role in the application."  
+**All of these:**  
+    - @Component
+    - @Service
+    - @Repository
+    - @Controller
+    - @RestController  
+Ultimately create beans in the Spring IoC Container.   
+
+- First Understand @Component:  
+```java
+@Component
+public class Engine {
+}
+```  
+**Explaination:**  
+When Spring starts:  
+```java
+@ComponentScan
+```  
+scans the package.  
+
+And If it finds:
+```java
+@Component
+public class Engine {}
+```  
+then creates a bean.  
+
+Internally:  
+```java
+Engine engine = new Engine();
+```  
+and stores it in the IoC Container.  
+
+You can inject it anywhere by:  
+```java
+@Autowired
+private Engine engine;
+```  
+
+- Why Do We Have @Service, @Repository, etc.?  
+Technically: @Service, @Repository, @Controller are specialized forms of: @Component.  
+For example:  
+```java
+@Service
+public class UserService {
+}
+```
+is almost equivalent to:  
+
+```java
+@Component
+public class UserService {
+}
+```  
+Spring creates a bean in both cases. The difference is: Readability, Purpose and Additional Features.  
+
+    - @Service Used for: Business Logic Layer.
+    - @Repository Used for: Database Access Layer.
+    - @Controller Used in: Spring MVC Applications and Returns: HTML Pages / JSP / Thymeleaf Views.  
+
+Ex:
+```java
+@Controller
+public class UserController {
+
+    @GetMapping("/home")
+    public String home() {
+        return "home";
+    }
+} 
+
+Response:
+<html>
+   ....
+</html>
+```  
+
+- @RestController, Most commonly used nowadays. Used for:  
+```java
+	REST APIs
+	JSON Response
+	Microservices
+```  
+Ex:
+```java
+@RestController
+public class UserController {
+
+    @GetMapping("/user")
+    public String getUser() {
+        return "Ankit";
+    }
+}
+
+Response: 
+"Ankit"
+```  
+Sent directly in HTTP response body. and This conversion is performed by Jackson Library.  
+
+- Why @RestController Was Introduced?  
+Before Spring 4.0, we wrote:  
+Ex:
+```java
+@Controller
+public class UserController {
+
+    @ResponseBody
+    @GetMapping("/user")
+    public User getUser() {
+
+        return new User(1L, "Ankit");
+    }
+}
+```  
+Notice:  
+```java
+@ResponseBody
+```  
+required on every method.  
+
+- What Does @ResponseBody Do?  
+It tells Spring:  
+	- Don't look for HTML page.  
+	- Write return value directly to HTTP response body.  
+So, @RestController is equivalent to: @Controller and @ResponseBody
