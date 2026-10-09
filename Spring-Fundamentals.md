@@ -411,3 +411,161 @@ public class Engine {
 ```java
 @SessionScope
 ```
+
+# What is Autowiring?  
+Autowiring means: Spring automatically finds the required dependency and injects it into your class.  
+
+Instead of writing:
+```java
+Engine engine = new PetrolEngine();
+Car car = new Car(engine);
+```  
+Spring does it automatically.  
+Ex: Engine Bean 
+```java
+@Component
+public class Engine {
+ 
+public void start() {
+    System.out.println("Engine Started");
+    }
+}
+```  
+
+Car Bean  
+```java
+@Component
+public class Car {
+ 
+	@Autowired
+	private Engine engine;
+	 
+	public void drive() {
+	engine.start();
+	}
+}
+```  
+
+**When Spring starts:**  
+1. Creates Engine Bean  
+2. Creates Car Bean  
+3. Finds Engine dependency  
+4. Injects Engine into Car  
+ 
+**Internally:**  
+```java
+Engine engine = new Engine();
+Car car = new Car();
+car.engine = engine;
+```  
+
+- **The Problem: Multiple Beans**  
+Ex: Payment Gateway Integration  
+
+Suppose your application supports multiple payment gateways.  
+1. Razorpay
+2. Stripe
+3. PayU  
+
+You create an interface:  
+```java
+public interface PaymentGateway {
+	void pay(double amount);
+}
+```  
+
+**Implementation 1:**  
+```java
+@Component
+public class RazorpayGateway implements PaymentGateway {
+ 
+	@Override
+	public void pay(double amount) {
+	    System.out.println("Payment through Razorpay");
+	}
+}
+```  
+
+**Implementation 2:**  
+```java
+@Component
+public class StripeGateway implements PaymentGateway {
+ 
+	@Override
+	public void pay(double amount) {
+	System.out.println("Payment through Stripe");
+	}
+}
+```  
+* Now Spring Container has: razorpayGateway and stripeGateway, and both are of type PaymentGateway.  
+
+```java
+@Service
+public class PaymentService {
+	@Autowired
+	private PaymentGateway paymentGateway;
+}
+```  
+
+* Spring starts application and sees: PaymentService needs PaymentGateway. So Spring seraches and find "RazorpayGateway" and "StripeGateway". Now spring ask which one i inject? which It cannot decide.  **Result: NoUniqueBeanDefinitionException**  
+Meaning: Multiple beans found for the same type. Expected 1 bean but found 2.  
+
+- **Solution 1: @Primary**
+Ex:
+```java
+public interface PaymentGateway {}
+
+@Component
+@Primary
+public class RazorpayGateway implements PaymentGateway {}
+
+@Component
+public class StripeGateway implements PaymentGateway {}
+
+Now, 
+@Autowired
+private PaymentGateway paymentGateway; Spring automatically injects, "RazorpayGateway".
+```  
+
+- **Solution 2: @Qualifier**  
+Ex:
+```java
+@Service
+public class PaymentService {
+	 
+	private final PaymentGateway paymentGateway;
+	public PaymentService(@Qualifier("StripeGateway")PaymentGateway paymentGateway) {
+		this.paymentGateway = paymentGateway; 
+	}
+}
+Here, Spring directly injects: StripeGateway.
+```  
+
+- **Solution 3: Inject All Implementations**  
+Instead of one bean, get all matching beans.  
+Ex:
+```java
+@Autowired
+private List<PaymentGateway> gateways;
+
+Spring injects:
+[
+ RazorpayGateway,
+ StripeGateway
+]
+```  
+
+- **Solution 4: Bean Name Based Injection**  
+Use bean name directly.  
+Ex:
+```java
+@Component("razorpay")
+public class RazorpayGateway
+        implements PaymentGateway {
+}
+
+@Autowired
+@Qualifier("razorpay")
+private PaymentGateway gateway;
+```  
+Spring matches by bean name.
