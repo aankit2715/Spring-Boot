@@ -194,5 +194,57 @@ public class Car {
     private Engine engine;
 }
 ```  
-Works but not recommended.
+Works but not recommended.  
 
+# 3. Bean Management:  
+Ex:
+```java
+@Component
+class Engine {}
+ 
+@Component
+class Car {
+ 
+	@Autowired
+	Engine engine;
+}
+```  
+Application startup:  
+
+- Step 1: 
+```java 
+Spring scans packages.  
+@ComponentScan
+ 
+Finds: Engine and Car
+```  
+
+- Step 2
+```java
+Creates Engine Bean.
+Engine engine = new Engine();
+```  
+
+- Step 3
+```java
+Creates Car Bean.
+Car car = new Car();
+```  
+
+- Step 4
+```java
+Injects Engine into Car.
+car.engine = engine;
+```
+
+- Step 5
+```java
+Stores in IoC Container.
+Map<String, Object> beanContainer;
+ 
+Conceptually:
+{
+    "engine" : EngineObject,
+    "car" : CarObject
+}
+```
