@@ -61,3 +61,49 @@ Ex:
 Car car = context.getBean(Car.class);
 ```  
 Now Spring creates object and injects dependencies automatically.
+
+# Spring Container:  
+This is the brain of Spring.  
+
+**Responsibilities:**  
+    - Create Beans
+    - Inject Dependencies
+    - Manage Lifecycle
+    - Destroy Beans  
+
+**Two implementations:**  
+
+1. BeanFactory:  
+Basic container.  
+Ex:
+```java
+BeanFactory factory;
+```  
+Lazy loading.  
+Bean created only when needed.  
+
+2. ApplicationContext:  
+Most commonly used.  
+Ex:
+```java
+ApplicationContext context;
+```  
+Spring Boot internally uses ApplicationContext.  
+
+# What is a Bean?  
+A bean is simply an object managed by Spring.  
+
+- Normal Object:  
+Ex: 
+```java
+Engine engine = new Engine();
+```  
+
+- Spring Bean:  
+Ex:
+```java
+@Component
+public class Engine {
+}
+```  
+Spring creates and manages this object.  
