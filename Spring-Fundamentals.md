@@ -62,7 +62,7 @@ Car car = context.getBean(Car.class);
 ```  
 Now Spring creates object and injects dependencies automatically.
 
-# Spring Container:  
+# 2. Spring Container:  
 This is the brain of Spring.  
 
 **Responsibilities:**  
@@ -108,7 +108,7 @@ public class Engine {
 ```  
 Spring creates and manages this object.  
 
-# 2. Dependency Injection (DI):  
+# 3. Dependency Injection (DI):  
 Ex: Car depends on Engine. Spring injects Engine into Car.  
 
 - Types of Dependency Injection:  
@@ -196,7 +196,7 @@ public class Car {
 ```  
 Works but not recommended.  
 
-# 3. Bean Management:  
+# 4. Bean Management:  
 Ex:
 ```java
 @Component
@@ -378,7 +378,7 @@ It tells Spring:
 	- Write return value directly to HTTP response body.  
 So, @RestController is equivalent to: @Controller and @ResponseBody  
 
-# Bean Scopes:
+# 5. Bean Scopes:
 - **Singleton (By default):** Only one object.  
 Ex:
 ```java
@@ -412,7 +412,7 @@ public class Engine {
 @SessionScope
 ```
 
-# What is Autowiring?  
+# 6. What is Autowiring?  
 Autowiring means: Spring automatically finds the required dependency and injects it into your class.  
 
 Instead of writing:
@@ -606,7 +606,7 @@ public ObjectMapper objectMapper() {
 	Ex: ObjectMapper, ExecutorService, RestTemplate, ModelMapper, WebClient etc..
 
 
-# 5. Bean Lifecycle:  
+# 7. Bean Lifecycle:  
 Bean Lifecycle is one of the most important Spring Core topics because it explains: How a bean is created, initialized, used, and destroyed inside the Spring IoC Container.  
 
 **Lifecycle:**  
@@ -650,6 +650,231 @@ public class KafkaConsumerService {
         System.out.println("Kafka Consumer Stopped");
     }
 }
+```
+
+# 8. Spring Boot Auto Configuration:  
+Auto Configuration is one of the biggest reasons why Spring Boot became popular.   
+
+Before Spring Boot, in traditional Spring, developers had to manually configure almost everything:  
+	- DataSource
+	- EntityManager
+	- TransactionManager
+	- ViewResolver
+	- DispatcherServlet
+	- Jackson
+	- Tomcat  
+
+- With Spring Boot:  
+Spring automatically configures beans based on the dependencies available in your project.  
+
+Ex:  
+Without Auto Configuration, Suppose you want a database connection.  
+
+**Traditional Spring:**
+```java
+@Configuration
+public class DBConfig {
+
+    @Bean
+    public DataSource dataSource() {
+
+        DriverManagerDataSource ds =
+            new DriverManagerDataSource();
+
+        ds.setDriverClassName(
+            "com.mysql.cj.jdbc.Driver");
+
+        ds.setUrl(
+            "jdbc:mysql://localhost:3306/test");
+
+        ds.setUsername("root");
+        ds.setPassword("root");
+
+        return ds;
+    }
+}
+```  
+A lot of configuration.  
+
+**With Spring Boot:**  
+Just add dependency:  
+```java
+<dependency>
+    <groupId>
+        org.springframework.boot
+    </groupId>
+    <artifactId>
+        spring-boot-starter-data-jpa
+    </artifactId>
+</dependency>
+```  
+And properties:  
+```java
+spring.datasource.url=jdbc:mysql://localhost:3306/test
+spring.datasource.username=root
+spring.datasource.password=root
+```  
+Here, Spring Boot automatically creates:  
+	- DataSource
+	- EntityManager
+	- TransactionManager  
+
+**What Happens Internally?**  
+
+Suppose your project contains:  
+```java
+spring-boot-starter-web
+```  
+
+Spring Boot sees:
+```java
+Spring MVC Dependency Present
+```  
+
+and automatically configures:  
+- DispatcherServlet
+- Jackson
+- Tomcat
+- MVC Components  
+for you.  
+
+**How Does Auto Configuration Start?**  
+Look at:  
+```java
+@SpringBootApplication
+public class Application {
+ 
+	public static void main(String[] args) {
+	 
+	SpringApplication.run(Application.class, args);
+	}
+}
+```  
+
+**What is @SpringBootApplication?**  
+
+Internally:  
+```java
+@SpringBootApplication
+```  
+
+equals:
+```java
+@Configuration
+@EnableAutoConfiguration
+@ComponentScan
+```  
+
+Most important:  
+```java
+@EnableAutoConfiguration
+```  
+This activates Auto Configuration.  
+
+**What Does @EnableAutoConfiguration Do?**  
+It tells Spring Boot:  
+* Check dependencies present in the project.
+* Based on those dependencies,
+* automatically configure beans.  
+Ex:  
+
+Dependency:
+```java
+spring-boot-starter-web
+```  
+
+Spring Boot detects:
+```java
+Spring MVC available
+```  
+
+and creates:
+```java
+	DispatcherServlet
+	RequestMappingHandlerMapping
+	Jackson ObjectMapper
+	Embedded Tomcat
+```  
+automatically.  
+
+So you can directly write:  
+```java
+	@RestController
+	public class UserController {
+	 
+	@GetMapping("/hello")
+	public String hello() {
+	return "Hello";
+	}
+}
+```  
+without configuring Tomcat.  
+
+
+**How Does Spring Boot Know What to Configure?**  
+
+Spring Boot uses:
+```java
+Conditional Configuration
+```  
+Example:
+```java
+@Configuration
+@ConditionalOnClass(DataSource.class)
+public class DataSourceAutoConfiguration {
+}
+```  
+Meaning:  
+```java
+	If DataSource class exists,
+	apply this configuration.
+``` 
+
+Where Are These Auto Configurations?
+```java
+Inside Spring Boot JAR.
+```  
+
+How to See Auto Configuration in Action?
+```java
+Add: debug=true
+in: application.properties
+```  
+Startup logs show:
+```java
+Positive Matches: 
+	DataSourceAutoConfiguration matched
+	WebMvcAutoConfiguration matched
+	JacksonAutoConfiguration matched
+```  
+and many more. Very useful for debugging.  
+
+
+**How to Disable Auto Configuration?**  
+Suppose you don't want database auto configuration.  
+```java
+	@SpringBootApplication(
+		exclude =
+		DataSourceAutoConfiguration.class)
+	public class Application {
+	}
+```  
+Now Spring Boot won't create DataSource automatically.  
+
+
+**How does it work internally?**
+```java
+	@SpringBootApplication
+			↓
+	@EnableAutoConfiguration
+			↓
+	Spring Boot checks dependencies
+			↓
+	Conditional annotations decide
+	which configurations should be loaded
+			↓
+	Necessary beans are created
+	automatically
 ```
 
 
