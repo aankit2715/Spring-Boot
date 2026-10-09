@@ -603,9 +603,53 @@ public ObjectMapper objectMapper() {
 - **Easy Rule to Remember:**  
 	* Did I write this class? If yes then Use @Component, @Service, @Repository.  
 	* Is it from an external library? If yes then Use @Bean  
-	Ex: ObjectMapper
-		ExecutorService
-		RestTemplate
-		ModelMapper
-		WebClient
+	Ex: ObjectMapper, ExecutorService, RestTemplate, ModelMapper, WebClient etc..
+
+
+# 5. Bean Lifecycle:  
+Bean Lifecycle is one of the most important Spring Core topics because it explains: How a bean is created, initialized, used, and destroyed inside the Spring IoC Container.  
+
+**Lifecycle:**  
+```java	
+    Container Starts
+            |
+            V
+    Bean Instantiated
+            |
+            V
+    Dependencies Injected
+            |
+            V
+    @PostConstruct
+            |
+            V
+    Bean Ready
+            |
+            V
+    Application Running
+            |
+            V
+    @PreDestroy
+            |
+            V
+    Bean Destroyed
+```  
+
+Ex: Suppose your application connects to Kafka.  
+```java
+@Component
+public class KafkaConsumerService {
+
+    @PostConstruct  // To perform initialization work after dependencies are injected.
+    public void startConsumer() {
+        System.out.println("Kafka Consumer Started");
+    }
+
+    @PreDestroy
+    public void stopConsumer() {
+        System.out.println("Kafka Consumer Stopped");
+    }
+}
+```
+
 
