@@ -376,4 +376,38 @@ required on every method.
 It tells Spring:  
 	- Don't look for HTML page.  
 	- Write return value directly to HTTP response body.  
-So, @RestController is equivalent to: @Controller and @ResponseBody
+So, @RestController is equivalent to: @Controller and @ResponseBody  
+
+# Bean Scopes:
+- **Singleton (By default):** Only one object.  
+Ex:
+```java
+@Component
+@Scope("singleton")
+public class Engine {
+}
+
+Engine e1 = context.getBean(Engine.class);
+Engine e2 = context.getBean(Engine.class);
+ 
+if(e1 == e2) output: ture
+```  
+
+- **Prototype:** New object every request.  
+Ex:
+```java
+@Component
+@Scope("prototype")
+public class Engine {
+}
+```
+
+- **Request Scope:** One bean per HTTP request.  
+```java
+@RequestScope
+```  
+
+- **Session Scope:** One bean per session.  
+```java
+@SessionScope
+```
