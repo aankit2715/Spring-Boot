@@ -391,40 +391,41 @@ Request Allowed
     Bearer token
 ```  
 
-**Spring Security:**
-Validate Token
-Check User
-Check Role
-Return Data
+**Spring Security:**  
+```java
+    Validate Token
+    Check User
+    Check Role
+    Return Data
+```  
 
-**Common Security Filters**
-Behind the scenes Spring executes many filters:
-
+**Common Security Filters:**  
+Behind the scenes Spring executes many filters:  
+```java
 	UsernamePasswordAuthenticationFilter
-
 	BasicAuthenticationFilter
-
 	JwtAuthenticationFilter
-
 	ExceptionTranslationFilter
-
 	AuthorizationFilter
+```  
+These execute before controller.  
 
-These execute before controller.
 
+- **SecurityContext:**  
 
-- SecurityContext
+**After successful login:**  
+```java
+    Authentication auth =
+            SecurityContextHolder
+            .getContext()
+            .getAuthentication();
+```   
 
-**After successful login:**
-Authentication auth =
-		SecurityContextHolder
-		.getContext()
-		.getAuthentication();
- 
-
-**Contains:**
-Username
-Roles
-Authorities
+**Contains:**  
+```java
+    Username
+    Roles
+    Authorities
+```  
 Current logged-in user information lives here.
 
