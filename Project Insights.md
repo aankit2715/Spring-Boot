@@ -2,11 +2,14 @@
 
 - Spring Web Dependency:  
 Spring Web Starter brings together several important libraries.  
-| Component | Purpose |
-|---|---|
-| Spring MVC (`spring-webmvc`) | Handles HTTP requests and routes them to controller methods using components such as `DispatcherServlet`. |
-| Embedded Tomcat | Runs your web application and accepts HTTP connections by default. |
-| Jackson | Converts Java objects to JSON and JSON to Java objects. |
-| Spring Web (`spring-web`) | Provides HTTP-related classes, HTTP abstractions, and web utilities. |
-| Spring Boot auto-configuration | Automatically configures web-related components based on the dependencies available on the classpath. |
-| Logging (typically Logback) | Provides logging functionality through the default logging setup. |
+```java
+Component                          | Purpose
+-----------------------------------|---------------------------------------------------------------
+Spring MVC (spring-webmvc)         | Handles HTTP requests and routes them to controller methods.
+Embedded Tomcat                    | Runs the web application and accepts HTTP connections by default.
+Jackson                            | Converts Java objects to JSON and JSON to Java objects.
+Spring Web (spring-web)            | Provides HTTP-related classes, abstractions, and web utilities.
+Spring Boot Auto-configuration     | Automatically configures web components based on dependencies.
+Logging (typically Logback)        | Provides application logging functionality.
+```
+
